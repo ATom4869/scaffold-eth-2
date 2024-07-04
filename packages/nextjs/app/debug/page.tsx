@@ -1,16 +1,59 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import UnAuthorizedPage from "../votreXTokenAdmin/components/UnAuthorizedPage";
 import { DebugContracts } from "./_components/DebugContracts";
 import type { NextPage } from "next";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useWalletClient } from "wagmi";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
-export const metadata = getMetadata({
-  title: "Debug Contracts",
-  description: "Debug your deployed 🏗 Scaffold-ETH 2 contracts in an easy way",
-});
-
 const Debug: NextPage = () => {
+  const { data: walletClient } = useWalletClient();
+
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const ADMIN_ADDRESS = process.env.NEXT_PUBLIC_ADMIN_ADDRESS;
+
+  useEffect(() => {
+    const checkAdminAddress = async () => {
+      setIsLoading(true);
+      try {
+        const currentAddress = await walletClient?.account.address;
+        if (currentAddress?.toLowerCase() === ADMIN_ADDRESS?.toLowerCase()) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.error("Error detecting wallet address:", error);
+        toast.error("Error detecting wallet address", {
+          autoClose: 3000,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAdminAddress();
+  }, [walletClient]);
+
+  if (isLoading) {
+    return (
+      <div className="loading-container" style={{ textAlign: "center", marginTop: "50px" }}>
+        <h2>Loading...</h2>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return <UnAuthorizedPage />;
+  }
   return (
     <>
       <DebugContracts />
+
       <div className="text-center mt-8 bg-secondary p-10">
         <h1 className="text-4xl my-0">Debug Contracts</h1>
         <p className="text-neutral">
