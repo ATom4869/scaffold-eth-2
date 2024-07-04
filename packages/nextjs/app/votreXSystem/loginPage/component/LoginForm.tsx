@@ -28,31 +28,35 @@ const LoginForm = () => {
   const loginCheck = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const currentAddress = walletClient?.account.address;
+      const currentAddress = await walletClient?.account.address;
       const orgIDCheck = await VotreXSystemContract?.read.organizationData([formData.orgID]);
-
-      if (!orgIDCheck?.[5]) {
-        toast.error("Organization ID does not exist in the system.", {
-          autoClose: 3000,
-        });
-        return;
-      }
-
       const accountCheck = await VotreXSystemContract?.read.getUserInfo();
 
-      if (currentAddress === orgIDCheck[1] && accountCheck?.[1]) {
-        toast.success("You are an Admin", {
-          autoClose: 3000,
-          onClose: () => {
-            window.location.href = "/admin-dashboard"; // Redirect to admin dashboard
-          },
-        });
+      if (orgIDCheck?.[1] && currentAddress == orgIDCheck?.[1]) {
+        if (accountCheck?.[1]) {
+          toast.success("You are an Admin", {
+            autoClose: 3000,
+            onClose: () => {
+              localStorage.setItem("orgID", formData.orgID);
+              localStorage.setItem("adminAddress", currentAddress);
+
+              window.location.href = "/votreXSystem/electionAdmin/dashboard/";
+            },
+          });
+        } else {
+          toast.success("You are a Voter", {
+            autoClose: 3000,
+            onClose: () => {
+              localStorage.setItem("orgID", formData.orgID);
+              localStorage.setItem("adminAddress", currentAddress);
+
+              window.location.href = "/voter-dashboard";
+            },
+          });
+        }
       } else {
-        toast.success("You are a Voter", {
+        toast.error("Invalid organization ID or admin address. Please try again.", {
           autoClose: 3000,
-          onClose: () => {
-            window.location.href = "/voter-dashboard"; // Redirect to voter dashboard
-          },
         });
       }
     } catch (e) {

@@ -6,7 +6,6 @@ import "../registerPage.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useWalletClient } from "wagmi";
-import { useBlockNumber } from "wagmi";
 import ButtonA from "~~/components/ButtonA";
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 

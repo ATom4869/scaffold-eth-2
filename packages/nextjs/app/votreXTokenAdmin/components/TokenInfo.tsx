@@ -14,11 +14,6 @@ const TokenInfo = () => {
     walletClient,
   });
 
-  const { data: VotreXContract } = useScaffoldContract({
-    contractName: "VotreXSystem",
-    walletClient,
-  });
-
   const { data: VotreXTokenMAXSupply } = useScaffoldReadContract({
     contractName: "VotreXToken",
     functionName: "MAXSupply",
@@ -145,6 +140,9 @@ const TokenInfo = () => {
     contractTokenBalance,
     TokencirculatingSupply,
     VotreXTokenOwner,
+    VotreXStatus,
+    contractVotreXTokenBalance,
+    contractVotreXVOXTokenBalance,
   ]);
 
   const formatTokenSupply = (supply: bigint, decimals: number) => {

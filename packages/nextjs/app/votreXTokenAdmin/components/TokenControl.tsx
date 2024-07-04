@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import BurnModal from "./BurnModal";
 import ContractStorageModal from "./ContractStorageModal";
 import MintModal from "./MintModal";
@@ -195,7 +195,7 @@ const TokenControl = () => {
     const accountDestination = destinationAddress;
     const VotreXAdress = VotreXSysContract?.address;
     const OwnerAddress = await VotreXSysContract?.read.getOwnerAddress();
-    const balanceTransferAmountBigInt: bigint = BigInt(balanceTransferAmount);
+    const balanceTransferAmountBigInt = BigInt(balanceTransferAmount);
     try {
       if (accountDestination === VotreXAdress) {
         await InterfaceContract?.write.balanceTx([accountDestination, balanceTransferAmountBigInt]);
@@ -221,16 +221,37 @@ const TokenControl = () => {
 
   const handleVotreXWithdrawalAmount = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const TokenBalanceTransferAmountBigInt: bigint = BigInt(balanceWithdrawalsAmount);
+    const TokenBalanceTransferAmountBigInt = BigInt(balanceWithdrawalsAmount);
     const VotreXaddr = VotreXSysContract?.address;
     try {
+      await TokenWithdrawals(
+        {
+          functionName: "TokenWithdraw",
+          args: [TokenBalanceTransferAmountBigInt],
+        },
+        {
+          onBlockConfirmation: txnReceipt => {
+            console.log("📦 Transaction blockHash", txnReceipt.blockHash);
+            toast.success(
+              `Success transfered ${TokenBalanceTransferAmountBigInt} VOX from ` +
+                VotreXaddr +
+                " to Admin Address, Receipt: " +
+                txnReceipt.blockHash +
+                txnReceipt.cumulativeGasUsed,
+              {
+                autoClose: 3000,
+                onClose: () => window.location.reload(),
+              },
+            );
+          },
+        },
+      );
       await ContractETHWitdrawals(
         {
           functionName: "withdrawFees",
         },
         {
           onBlockConfirmation: txnReceipt => {
-            console.log("📦 Transaction blockHash", txnReceipt.blockHash, txnReceipt.logs);
             toast.success(
               `Success withdrawn all ETH to Admin Address, Receipt: ` +
                 txnReceipt.blockHash +
@@ -243,31 +264,7 @@ const TokenControl = () => {
           },
         },
       );
-      await TokenWithdrawals(
-        {
-          functionName: "TokenWithdraw",
-          args: [TokenBalanceTransferAmountBigInt],
-        },
-        {
-          onBlockConfirmation: txnReceipt => {
-            console.log("📦 Transaction blockHash", txnReceipt.blockHash);
-            toast.success(
-              `Success transfered ${TokenBalanceTransferAmountBigInt} VOX to Admin Address, Receipt: ` +
-                txnReceipt.blockHash +
-                txnReceipt.cumulativeGasUsed,
-              {
-                autoClose: 3000,
-                onClose: () => window.location.reload(),
-              },
-            );
-          },
-        },
-      );
-    } catch (error) {
-      toast.error("Token transfer Error.", {
-        autoClose: 3000,
-      });
-    }
+    } catch (error) {}
   };
 
   const handleSetInterfaceContract = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -459,7 +456,7 @@ const TokenControl = () => {
   const handleInterfaceApproval = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const approvalValuesinNumber: number = Number(interfaceApprovalValue);
+      const approvalValuesinNumber = Number(interfaceApprovalValue);
       await InterfaceContract?.write.approveTxInterface([approvalValuesinNumber]);
       toast.success(`Approved ${approvalValuesinNumber.toString()} tokens for Interface successfully`, {
         autoClose: 3000,
@@ -476,7 +473,7 @@ const TokenControl = () => {
   const handleVotreXSysApproval = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const approvalValuesinBigInt: bigint = BigInt(VotreXSysApprovalValue);
+      const approvalValuesinBigInt = BigInt(VotreXSysApprovalValue);
       await InterfaceContract?.write.approveVotreX([approvalValuesinBigInt]);
       toast.success(`Approved ${approvalValuesinBigInt.toString()} tokens for VotreX System successfully`, {
         autoClose: 3000,

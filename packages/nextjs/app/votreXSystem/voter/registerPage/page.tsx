@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import RegistrationForm from "./components/RegistrationForm";
 import { NextPage } from "next";
-import ButtonA from "~~/components/ButtonA";
 
 const registerPage: NextPage = () => {
   return (

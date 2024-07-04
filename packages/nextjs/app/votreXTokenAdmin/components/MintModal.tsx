@@ -13,7 +13,7 @@ const MintModal: React.FC<Props> = ({ isOpen, onClose, onMint }) => {
 
   const handleMint = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const mintAmountBigInt: bigint = BigInt(mintAmount);
+    const mintAmountBigInt = BigInt(mintAmount);
     onMint(mintDestination as Address, mintAmountBigInt);
     setMintDestination("");
     setMintAmount("");

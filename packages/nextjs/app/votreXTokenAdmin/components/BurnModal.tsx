@@ -11,7 +11,7 @@ const BurnModal: React.FC<Props> = ({ isOpen, onClose, onBurn }) => {
 
   const handleBurn = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const burnAmountBigInt: bigint = BigInt(burnAmount);
+    const burnAmountBigInt = BigInt(burnAmount);
     onBurn(burnAmountBigInt);
     setBurnAmount("");
   };

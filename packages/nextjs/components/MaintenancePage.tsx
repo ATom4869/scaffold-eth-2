@@ -1,6 +1,4 @@
 import React from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 const UnAuthorizedPage = () => {
   return (
@@ -17,7 +15,6 @@ const UnAuthorizedPage = () => {
           allowFullScreen
         ></iframe>
       </div>
-      <ToastContainer />
     </div>
   );
 };

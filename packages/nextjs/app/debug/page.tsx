@@ -7,7 +7,8 @@ import type { NextPage } from "next";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useWalletClient } from "wagmi";
-import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
+
+// import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 
 const Debug: NextPage = () => {
   const { data: walletClient } = useWalletClient();
@@ -48,7 +49,12 @@ const Debug: NextPage = () => {
   }
 
   if (!isAdmin) {
-    return <UnAuthorizedPage />;
+    return (
+      <div>
+        <UnAuthorizedPage />
+        <ToastContainer />
+      </div>
+    );
   }
   return (
     <>
